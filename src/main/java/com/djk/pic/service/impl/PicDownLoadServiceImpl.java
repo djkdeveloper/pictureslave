@@ -7,6 +7,7 @@ import com.djk.pic.service.PicDownLoadService;
 import com.djk.pic.utils.FileUtils;
 import com.djk.pic.utils.HttpUtils;
 import com.djk.pic.utils.LogUtils;
+import com.djk.pic.utils.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +39,24 @@ public class PicDownLoadServiceImpl implements PicDownLoadService {
 
         ThreadTask.getInstance().addPicDownLoadTaks(() ->
         {
-            FileUtils.getInstance().savePic(HttpUtils.getInstance().downloadPic(message));
+            try {
+                FileUtils.getInstance().saveFileByBytes(HttpUtils.getInstance().downloadPic(message), systemConfig.getSavePicPath()+getImageName(message));
+            } catch (Exception e) {
+
+            }
         });
+    }
+
+
+    /**
+     * 获得图片的名称
+     * @param url 图片地址
+     * @return 返回图片的名称
+     */
+    private static String getImageName(String url) {
+        if (StringUtils.isEmpty(url)) {
+            return "";
+        }
+        return url.substring(url.lastIndexOf("/"));
     }
 }
